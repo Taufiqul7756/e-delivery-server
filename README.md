@@ -44,3 +44,11 @@ Before you begin, ensure you have met the following requirements:
    git clone https://github.com/yourusername/e-delivery-platform.git
    cd e-delivery-platform
    ```
+2. Make your own .env:
+
+   ```bash
+   PORT=5000
+   MONGODB_URI=your database url
+   JWT_SECRET=jwt_secret
+
+   ```
