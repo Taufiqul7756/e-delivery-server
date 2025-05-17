@@ -10,6 +10,9 @@ router.get("/profile", auth, userController.getProfile);
 router.put("/profile", auth, userController.updateProfile);
 
 // Get all users (optional, might require admin privileges)
-router.get("/", auth, userController.getAllUsers);
+router.get("/all-users", auth, userController.getAllUsers);
+
+// Delete user by userId
+router.delete("/:userId", auth, userController.deleteUser);
 
 module.exports = router;

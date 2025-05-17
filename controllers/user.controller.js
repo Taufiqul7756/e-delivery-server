@@ -34,3 +34,23 @@ exports.getAllUsers = async (req, res) => {
     res.status(400).send(error.message);
   }
 };
+
+// Delete user by userId
+exports.deleteUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Check if the user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    // Delete the user
+    await User.findByIdAndDelete(userId);
+
+    res.status(200).send("User deleted successfully");
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+};
