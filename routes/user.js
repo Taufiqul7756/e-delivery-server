@@ -10,7 +10,7 @@ router.get("/profile", auth, userController.getProfile);
 router.put("/profile", auth, userController.updateProfile);
 
 // Get all users (optional, might require admin privileges)
-router.get("/all-users", auth, userController.getAllUsers);
+router.get("/all-users", userController.getAllUsers);
 
 // Delete user by userId
 router.delete("/:userId", auth, userController.deleteUser);
