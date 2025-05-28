@@ -33,16 +33,46 @@ exports.login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).send("Invalid email or password");
 
-    const token = jwt.sign(
+    const accessToken = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "1m" }
+    );
+
+    // Generate refresh token
+    const refreshToken = jwt.sign(
+      { id: user._id },
+      process.env.JWT_REFRESH_SECRET,
+      { expiresIn: "3m" } // Refresh token expires in 3 minutes
     );
 
     // Exclude sensitive information like password before sending user info
     const { password: userPassword, ...userInfo } = user.toObject();
 
-    res.json({ token, user: userInfo });
+    res.json({ accessToken, refreshToken, user: userInfo });
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+};
+
+// Refresh token
+exports.refreshToken = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) return res.status(401).send("Refresh token required");
+
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const user = await User.findById(decoded.id);
+    if (!user) return res.status(401).send("Invalid refresh token");
+
+    // Generate new access token
+    const accessToken = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1m" } // Access token expires in 1 minute
+    );
+
+    res.json({ accessToken });
   } catch (error) {
     res.status(400).send(error.message);
   }
