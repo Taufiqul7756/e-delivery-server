@@ -17,7 +17,24 @@ exports.register = async (req, res) => {
       role,
     });
     await user.save();
-    res.status(201).send("User registered successfully");
+    // Generate access token
+    const accessToken = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1m" }
+    );
+
+    // Generate refresh token
+    const refreshToken = jwt.sign(
+      { id: user._id },
+      process.env.JWT_REFRESH_SECRET,
+      { expiresIn: "3m" }
+    );
+
+    // Exclude sensitive information like password before sending user info
+    const { password: userPassword, ...userInfo } = user.toObject();
+
+    res.status(201).json({ accessToken, refreshToken, user: userInfo });
   } catch (error) {
     res.status(400).send(error.message);
   }
@@ -43,7 +60,7 @@ exports.login = async (req, res) => {
     const refreshToken = jwt.sign(
       { id: user._id },
       process.env.JWT_REFRESH_SECRET,
-      { expiresIn: "3m" } // Refresh token expires in 3 minutes
+      { expiresIn: "3m" }
     );
 
     // Exclude sensitive information like password before sending user info
