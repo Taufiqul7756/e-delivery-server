@@ -21,14 +21,14 @@ exports.register = async (req, res) => {
     const accessToken = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "1m" }
+      { expiresIn: "1d" }
     );
 
     // Generate refresh token
     const refreshToken = jwt.sign(
       { id: user._id },
       process.env.JWT_REFRESH_SECRET,
-      { expiresIn: "3m" }
+      { expiresIn: "7d" }
     );
 
     // Exclude sensitive information like password before sending user info
@@ -53,14 +53,14 @@ exports.login = async (req, res) => {
     const accessToken = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "1m" }
+      { expiresIn: "1d" }
     );
 
     // Generate refresh token
     const refreshToken = jwt.sign(
       { id: user._id },
       process.env.JWT_REFRESH_SECRET,
-      { expiresIn: "3m" }
+      { expiresIn: "7d" }
     );
 
     // Exclude sensitive information like password before sending user info
@@ -86,7 +86,7 @@ exports.refreshToken = async (req, res) => {
     const accessToken = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "1m" } // Access token expires in 1 minute
+      { expiresIn: "1d" } // Access token expires in 1 day
     );
 
     res.json({ accessToken });

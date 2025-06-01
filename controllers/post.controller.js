@@ -122,3 +122,18 @@ exports.getPostsByUserId = async (req, res) => {
     res.status(400).send(error.message);
   }
 };
+
+// Get own posts
+exports.getOwnPosts = async (req, res) => {
+  try {
+    const userId = req.user.id; // Assuming req.user is set by your authentication middleware
+
+    const posts = await Post.find({ userId })
+      .populate("userId", "name email")
+      .populate("statusHistory.changedBy", "name email");
+
+    res.json(posts);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+};
