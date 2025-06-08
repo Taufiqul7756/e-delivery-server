@@ -137,3 +137,28 @@ exports.getOwnPosts = async (req, res) => {
     res.status(400).send(error.message);
   }
 };
+
+// Delete a post
+exports.deletePost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const userId = req.user.id; // Assuming req.user is set by your authentication middleware
+
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).send("Post not found");
+    }
+
+    // Check if the post belongs to the user
+    if (post.userId.toString() !== userId) {
+      return res.status(403).send("Not authorized to delete this post");
+    }
+
+    await Post.findByIdAndDelete(postId);
+
+    res.status(200).send("Post deleted successfully");
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+};
