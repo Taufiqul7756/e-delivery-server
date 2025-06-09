@@ -162,3 +162,31 @@ exports.deletePost = async (req, res) => {
     res.status(400).send(error.message);
   }
 };
+
+// Add a comment to a post
+exports.addComment = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { text, name, role } = req.body;
+    const userId = req.user.id;
+
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).send("Post not found");
+    }
+
+    post.comments.push({
+      userId,
+      text,
+      name,
+      role,
+      createdAt: new Date(),
+    });
+
+    await post.save();
+
+    res.status(201).json(post);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+};
