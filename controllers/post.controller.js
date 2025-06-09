@@ -211,3 +211,45 @@ exports.getComments = async (req, res) => {
     res.status(400).send(error.message);
   }
 };
+
+// Get all orders for a user
+exports.getUserOrders = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const orders = await Post.find({
+      "statusHistory.changedBy": userId,
+      "statusHistory.status": { $in: ["Accepted", "Completed"] },
+    })
+      .populate("userId", "name email")
+      .populate("statusHistory.changedBy", "name email");
+
+    res.json(orders);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+};
+
+// Get a single order by orderId
+exports.getSingleOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const userId = req.user.id;
+
+    const order = await Post.findOne({
+      _id: orderId,
+      "statusHistory.changedBy": userId,
+      "statusHistory.status": { $in: ["Accepted", "Completed"] },
+    })
+      .populate("userId", "name email")
+      .populate("statusHistory.changedBy", "name email");
+
+    if (!order) {
+      return res.status(404).send("Order not found");
+    }
+
+    res.json(order);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+};

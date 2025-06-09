@@ -21,6 +21,7 @@ mongoose
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/posts", require("./routes/post"));
 app.use("/api/users", require("./routes/user"));
+app.use("/api/orders", require("./routes/order"));
 app.use("/", (req, res) => {
   res.send("Welcome to the API");
 });
