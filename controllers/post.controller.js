@@ -190,3 +190,24 @@ exports.addComment = async (req, res) => {
     res.status(400).send(error.message);
   }
 };
+
+// Get comments for a specific post
+exports.getComments = async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    const post = await Post.findById(postId).populate(
+      "comments.userId",
+      "name role"
+    );
+
+    if (!post) {
+      return res.status(404).send("Post not found");
+    }
+
+    // Return the comments array
+    res.status(200).json(post.comments);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+};

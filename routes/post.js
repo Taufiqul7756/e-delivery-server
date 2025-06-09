@@ -12,5 +12,6 @@ router.get("/user/:userId", auth, postController.getPostsByUserId); // Get posts
 router.get("/own/posts", auth, postController.getOwnPosts); // getting own all posts
 router.delete("/:postId", auth, postController.deletePost); // delete own post
 router.post("/:postId/comments", auth, postController.addComment); // adding comments
+router.get("/:postId/comments", auth, postController.getComments); // New route for fetching comments
 
 module.exports = router;
